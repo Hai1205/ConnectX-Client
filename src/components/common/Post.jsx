@@ -10,7 +10,6 @@ import { toast } from "react-hot-toast";
 
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
-import { commentPost, deletePost, likePost } from "../../utils/api/postsApi";
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
@@ -18,22 +17,25 @@ const Post = ({ post }) => {
 	const queryClient = useQueryClient();
 	const postOwner = post.user;
 	const isLiked = post.likes.includes(authUser._id);
+
 	const isMyPost = authUser._id === post.user._id;
+
 	const formattedDate = formatPostDate(post.createdAt);
 
-	const { mutate: deletePosts, isPending: isDeleting } = useMutation({
+	const { mutate: deletePost, isPending: isDeleting } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = awaitdeletePost(post._id);
-				const data = await res.data;
+				const res = await fetch(`/api/posts/${post._id}`, {
+					method: "DELETE",
+				});
+				const data = await res.json();
 
-				if (res.status != 200) {
-					throw new Error(data.error || "Something went wrong");
+				if (res.status !== 200) {
+					console.error(res);
 				}
-
 				return data;
 			} catch (error) {
-				throw new Error(error);
+				console.error(res);
 			}
 		},
 		onSuccess: () => {
@@ -42,19 +44,19 @@ const Post = ({ post }) => {
 		},
 	});
 
-	const { mutate: likePosts, isPending: isLiking } = useMutation({
+	const { mutate: likePost, isPending: isLiking } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = awaitlikePost(post._id);
-				const data = await res.data;
-
-				if (res.status != 200) {
-					throw new Error(data.error || "Something went wrong");
+				const res = await fetch(`/api/posts/like/${post._id}`, {
+					method: "POST",
+				});
+				const data = await res.json();
+				if (res.status !== 200) {
+					console.error(res);
 				}
-
 				return data;
 			} catch (error) {
-				throw new Error(error);
+				console.error(res);
 			}
 		},
 		onSuccess: (updatedLikes) => {
@@ -76,19 +78,24 @@ const Post = ({ post }) => {
 		},
 	});
 
-	const { mutate: commentPosts, isPending: isCommenting } = useMutation({
+	const { mutate: commentPost, isPending: isCommenting } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = awaitcommentPost(post._id);
-				const data = await res.data;
+				const res = await fetch(`/api/posts/comment/${post._id}`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ text: comment }),
+				});
+				const data = await res.json();
 
-				if (res.status != 200) {
-					throw new Error(data.error || "Something went wrong");
+				if (res.status !== 200) {
+					console.error(res);
 				}
-
 				return data;
 			} catch (error) {
-				throw new Error(error);
+				console.error(res);
 			}
 		},
 		onSuccess: () => {
@@ -102,18 +109,18 @@ const Post = ({ post }) => {
 	});
 
 	const handleDeletePost = () => {
-		deletePosts();
+		deletePost();
 	};
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
 		if (isCommenting) return;
-		commentPosts();
+		commentPost();
 	};
 
 	const handleLikePost = () => {
 		if (isLiking) return;
-		likePosts();
+		likePost();
 	};
 
 	return (

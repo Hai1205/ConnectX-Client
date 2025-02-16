@@ -1,21 +1,49 @@
 import axios from "../service/axiosCustomize";
 
 export const deletePost = async (postId) => {
-  return await axios.delete(`/api/posts/${postId}`);
+  return await axios.delete(`/posts/${postId}`);
 };
 
 export const likePost = async (postId) => {
-  return await axios.post(`/api/posts/like/${postId}`);
+  return await axios.post(`/posts/like/${postId}`);
 };
 
 export const commentPost = async (postId) => {
-  return await axios.post(`/api/posts/comment/${postId}`);
+  return await axios.post(`/posts/comment/${postId}`);
 };
 
-export const fetchAnyThing = async (POST_ENDPOINT) => {
-  return await axios.post(POST_ENDPOINT);
+export const createPost = async (userId, photos, text) => {
+  const formData = new FormData();
+  
+  if (photos && photos.length > 0) {
+    photos.forEach((photo) => {
+      formData.append("photos", photo);
+    });
+  }
+
+  if (text) {
+    formData.append("text", text);
+  }
+
+  return await axios.post(`/posts/create/${userId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
-export const createPost=async (formData)=>{
-    return await axios.post("/api/posts/create", formData);
+export const getAllPosts = async () => {
+  return await axios.get("/posts/all-posts");
+};
+
+export const getFollowingPosts = async (userId) => {
+  return await axios.get(`/posts/following-posts/${userId}`);
+}
+
+export const getUserPosts = async (userId) => {
+  return await axios.get(`/posts/user-posts/${userId}`);
+}
+
+export const getLikedPosts = async (userId) => {
+  return await axios.get(`/posts/liked-posts/${userId}`);
 }

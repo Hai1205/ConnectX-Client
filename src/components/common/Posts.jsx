@@ -2,25 +2,87 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { fetchAnyThing } from "../../utils/api/postsApi";
+import { getAllPosts, getFollowingPosts, getLikedPosts, getUserPosts } from "../../utils/api/postsApi";
+import { useSelector } from "react-redux";
 
-const Posts = ({ feedType, username, userId }) => {
-	const getPostEndpoint = () => {
+const Posts = ({ feedType }) => {
+	const currentUser = useSelector((state) => state.user.currentUser);
+	const userId = currentUser._id;
+
+	const getAllPost = async () => {
+		try {
+			const res = await getAllPosts();
+			const data = res.data.postDTOList;
+
+			if (res.status !== 200) {
+				console.error(res);
+			}
+
+			return data;
+		} catch (error) {
+			console.error(res);
+		}
+	}
+
+	const getFollowingPost = async () => {
+		try {
+			const res = await getFollowingPosts(userId);
+			const data = res.data.postDTOList;
+
+			if (res.status !== 200) {
+				console.error(res);
+			}
+
+			return data;
+		} catch (error) {
+			console.error(res);
+		}
+	}
+
+	const getUserPost = async () => {
+		try {
+			const res = await getUserPosts(userId);
+			const data = res.data.postDTOList;
+
+			if (res.status !== 200) {
+				console.error(res);
+			}
+
+			return data;
+		} catch (error) {
+			console.error(res);
+		}
+	}
+
+	const getLikedPost = async () => {
+		try {
+			const res = await getLikedPosts(userId);
+			const data = res.data.postDTOList;
+
+			if (res.status !== 200) {
+				console.error(res);
+			}
+
+			return data;
+		} catch (error) {
+			console.error(res);
+		}
+	}
+
+	const getResponse = async () => {
 		switch (feedType) {
 			case "forYou":
-				return "/api/posts/all";
+				return getAllPost();
 			case "following":
-				return "/api/posts/following";
+				return getFollowingPost();
 			case "posts":
-				return `/api/posts/user/${username}`;
+				return getUserPost();
 			case "likes":
-				return `/api/posts/likes/${userId}`;
+				return getLikedPost();
 			default:
-				return "/api/posts/all";
+				return getAllPosts();
 		}
-	};
-
-	const POST_ENDPOINT = getPostEndpoint();
+	}
 
 	const {
 		data: posts,
@@ -29,38 +91,29 @@ const Posts = ({ feedType, username, userId }) => {
 		isRefetching,
 	} = useQuery({
 		queryKey: ["posts"],
-		queryFn: async () => {
-			try {
-				const res = awaitfetchAnyThing(POST_ENDPOINT);
-				const data = res.data;
-
-				if (res.status != 200) {
-					throw new Error(data.error || "Something went wrong");
-				}
-
-				return data;
-			} catch (error) {
-				throw new Error(error);
-			}
-		},
+		queryFn: getResponse(),
 	});
 
 	useEffect(() => {
 		refetch();
-	}, [feedType, refetch, username]);
+	}, [feedType, refetch, userId]);
 
 	return (
 		<>
 			{(isLoading || isRefetching) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
+
 					<PostSkeleton />
+
 					<PostSkeleton />
 				</div>
 			)}
+
 			{!isLoading && !isRefetching && posts?.length === 0 && (
 				<p className='text-center my-4'>No posts in this tab. Switch 👻</p>
 			)}
+
 			{!isLoading && !isRefetching && posts && (
 				<div>
 					{posts.map((post) => (
@@ -71,4 +124,5 @@ const Posts = ({ feedType, username, userId }) => {
 		</>
 	);
 };
+
 export default Posts;

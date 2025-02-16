@@ -3,27 +3,22 @@ import toast from "react-hot-toast";
 import { followUser } from "../utils/api/usersApi";
 
 const useFollow = () => {
-	const queryClient = useQueryClient();
 
 	const { mutate: follow, isPending } = useMutation({
-		mutationFn: async (userId) => {
+		mutationFn: async ({currentUserId, userToModifyId}) => {
 			try {
-				const res = awaitfollowUser(userId);
+				const res = await followUser(currentUserId, userToModifyId);
 
 				if (res.status !== 200) {
-					throw new Error(res.data.error || "Something went wrong");
+					console.error(res)
 				}
 
 				return;
 			} catch (error) {
-				throw new Error(error.message);
+				console.error(error)
 			}
 		},
 		onSuccess: () => {
-			Promise.all([
-				queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] }),
-				queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-			]);
 		},
 		onError: (error) => {
 			toast.error(error.message);

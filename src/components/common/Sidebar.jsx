@@ -7,38 +7,43 @@ import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { logOutSuccess } from "../../redux/slice/userSlice";
 import { logoutUser } from "../../utils/api/authApi";
 
 const Sidebar = () => {
-	const queryClient = useQueryClient();
-	const { mutate: logout } = useMutation({
-		mutationFn: async () => {
-			try {
-				const res = awaitlogoutUser();
-				const data = res.data;
+	const currentUser = useSelector((state) => state.user.currentUser);
+	const dispatch = useDispatch();
 
-				if (res.status != 200) {
-					throw new Error(data.error || "Something went wrong");
-				}
-			} catch (error) {
-				throw new Error(error);
+	const logOut = async () => {
+		try {
+			const res = await logoutUser();
+			const data = await res.data;
+
+			if (res.status !== 200) {
+				console.error(res);
 			}
-		},
+		} catch (error) {
+			console.log(error)
+			console.error(res);
+		}
+	};
+	const { mutate: logout } = useMutation({
+		mutationFn: logOut,
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["authUser"] });
+			dispatch(logOutSuccess());
 		},
 		onError: () => {
 			toast.error("Logout failed");
 		},
 	});
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
 				<Link to='/' className='flex justify-center md:justify-start'>
 					<XSvg className='px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900' />
 				</Link>
+
 				<ul className='flex flex-col gap-3 mt-4'>
 					<li className='flex justify-center md:justify-start'>
 						<Link
@@ -46,44 +51,52 @@ const Sidebar = () => {
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<MdHomeFilled className='w-8 h-8' />
+
 							<span className='text-lg hidden md:block'>Home</span>
 						</Link>
 					</li>
+
 					<li className='flex justify-center md:justify-start'>
 						<Link
 							to='/notifications'
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<IoNotifications className='w-6 h-6' />
+
 							<span className='text-lg hidden md:block'>Notifications</span>
 						</Link>
 					</li>
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${authUser?.username}`}
+							to={`/profile/${currentUser?.username}`}
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='w-6 h-6' />
+
 							<span className='text-lg hidden md:block'>Profile</span>
 						</Link>
 					</li>
 				</ul>
-				{authUser && (
+
+				{currentUser && (
 					<Link
-						to={`/profile/${authUser.username}`}
+						to={`/profile/${currentUser?.username}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={authUser?.profileImg || "/avatar-placeholder.png"} />
+								<img src={currentUser?.profileImg} />
 							</div>
 						</div>
+
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
-								<p className='text-white font-bold text-sm w-20 truncate'>{authUser?.fullName}</p>
-								<p className='text-slate-500 text-sm'>@{authUser?.username}</p>
+								<p className='text-white font-bold text-sm w-20 truncate'>{currentUser?.fullName}</p>
+
+								<p className='text-slate-500 text-sm'>@{currentUser?.username}</p>
 							</div>
+
 							<BiLogOut
 								className='w-5 h-5 cursor-pointer'
 								onClick={(e) => {
@@ -98,4 +111,5 @@ const Sidebar = () => {
 		</div>
 	);
 };
+
 export default Sidebar;

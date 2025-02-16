@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
-import { deleteNotification, notification } from "../../utils/api/notificationApi";
 
 const NotificationPage = () => {
 	const queryClient = useQueryClient();
@@ -13,14 +14,12 @@ const NotificationPage = () => {
 		queryKey: ["notifications"],
 		queryFn: async () => {
 			try {
-				const res = awaitnotification();
-				const data = await res.data;
-
-				if (res.status != 200) throw new Error(data.error || "Something went wrong");
-
+				const res = await fetch("/api/notifications");
+				const data = await res.json();
+				if (res.status !== 200) console.error(res);
 				return data;
 			} catch (error) {
-				throw new Error(error);
+				console.error(res);
 			}
 		},
 	});
@@ -28,14 +27,15 @@ const NotificationPage = () => {
 	const { mutate: deleteNotifications } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = awaitdeleteNotification();
-				const data = res.data;
+				const res = await fetch("/api/notifications", {
+					method: "DELETE",
+				});
+				const data = await res.json();
 
-				if (res.status != 200) throw new Error(data.error || "Something went wrong");
-
+				if (res.status !== 200) console.error(res);
 				return data;
 			} catch (error) {
-				throw new Error(error);
+				console.error(res);
 			}
 		},
 		onSuccess: () => {
