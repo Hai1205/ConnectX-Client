@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
-const EditProfileModal = ({ authUser }) => {
+const EditProfileModal = ({ currentUser }) => {
 	const [formData, setFormData] = useState({
 		fullName: "",
 		username: "",
@@ -19,18 +19,18 @@ const EditProfileModal = ({ authUser }) => {
 	};
 
 	useEffect(() => {
-		if (authUser) {
+		if (currentUser) {
 			setFormData({
-				fullName: authUser.fullName,
-				username: authUser.username,
-				email: authUser.email,
-				bio: authUser.bio,
-				link: authUser.link,
+				fullName: currentUser.fullName,
+				username: currentUser.username,
+				email: currentUser.email,
+				bio: currentUser.bio,
+				link: currentUser.link,
 				newPassword: "",
 				currentPassword: "",
 			});
 		}
-	}, [authUser]);
+	}, [currentUser]);
 
 	return (
 		<>
@@ -47,7 +47,8 @@ const EditProfileModal = ({ authUser }) => {
 						className='flex flex-col gap-4'
 						onSubmit={(e) => {
 							e.preventDefault();
-							updateProfile(formData);
+							
+							updateProfile({ userId: currentUser?._id, coverImg: null, profileImg: null, formData: formData });
 						}}
 					>
 						<div className='flex flex-wrap gap-2'>

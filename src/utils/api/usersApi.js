@@ -17,9 +17,7 @@ export const updateUser = async (userId, coverImg, profileImg, formData) => {
   }
 
   if (formData) {
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
+    data.append("formData", JSON.stringify(formData)); // Chuyển formData thành chuỗi JSON
   }
 
   return await axios.put(`/users/update/${userId}`, data, {

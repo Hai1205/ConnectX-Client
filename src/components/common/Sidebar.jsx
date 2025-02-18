@@ -2,7 +2,7 @@ import XSvg from "../svgs/X";
 
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
+import { FaSearch, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutSuccess } from "../../redux/slice/userSlice";
 import { logoutUser } from "../../utils/api/authApi";
+import { FaMessage } from "react-icons/fa6";
 
 const Sidebar = () => {
 	const currentUser = useSelector((state) => state.user.currentUser);
@@ -18,7 +19,6 @@ const Sidebar = () => {
 	const logOut = async () => {
 		try {
 			const res = await logoutUser();
-			const data = await res.data;
 
 			if (res.status !== 200) {
 				console.error(res);
@@ -58,12 +58,34 @@ const Sidebar = () => {
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
+							to='/explore'
+							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+						>
+							<FaSearch className='w-6 h-6' />
+
+							<span className='text-lg hidden md:block'>Explore</span>
+						</Link>
+					</li>
+
+					<li className='flex justify-center md:justify-start'>
+						<Link
 							to='/notifications'
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<IoNotifications className='w-6 h-6' />
 
 							<span className='text-lg hidden md:block'>Notifications</span>
+						</Link>
+					</li>
+
+					<li className='flex justify-center md:justify-start'>
+						<Link
+							to='/messages'
+							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
+						>
+							<FaMessage className='w-6 h-6' />
+
+							<span className='text-lg hidden md:block'>Messages</span>
 						</Link>
 					</li>
 

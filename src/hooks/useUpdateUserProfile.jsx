@@ -11,6 +11,7 @@ const useUpdateUserProfile = () => {
 				if (res.status !== 200) {
 					throw new Error(res.data.error || "Something went wrong");
 				}
+				console.log(res)
 
 				return res.data;
 			} catch (error) {

@@ -78,11 +78,10 @@ const ProfilePage = () => {
 				}
 			};
 			reader.readAsDataURL(file);
-			console.log(file);
 		}
 	};
-	
-	const isMyProfile = currentUser._id === user?._id;
+
+	const isMyProfile = currentUser?._id === user?._id;
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
 	const amIFollowing = currentUser?.followingList.includes(user?._id);
 	return (
@@ -104,15 +103,16 @@ const ProfilePage = () => {
 								<div className='flex flex-col'>
 									<p className='font-bold text-lg'>{user?.fullName}</p>
 
-									<span className='text-sm text-slate-500'>1 posts</span>
-									{/* <span className='text-sm text-slate-500'>{POSTS?.length} posts</span> */}
+									<span className='text-sm text-slate-500'>
+										{user?.postList?.length} {user?.postList?.length > 1 ? "posts" : "post"}
+									</span>
 								</div>
 							</div>
 
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
 								<img
-									src={coverImg.showCoverImg || user?.coverImg}
+									src={coverImg?.showCoverImg || user?.coverImg}
 									className='h-52 w-full object-cover'
 									alt='cover image'
 								/>
@@ -120,7 +120,7 @@ const ProfilePage = () => {
 								{isMyProfile && (
 									<div
 										className='absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200'
-										onClick={() => coverImgRef.current.click()}
+										onClick={() => coverImgRef?.current.click()}
 									>
 										<MdEdit className='w-5 h-5 text-white' />
 									</div>
@@ -151,7 +151,7 @@ const ProfilePage = () => {
 											{isMyProfile && (
 												<MdEdit
 													className='w-4 h-4 text-white'
-													onClick={() => profileImgRef.current.click()}
+													onClick={() => profileImgRef?.current.click()}
 												/>
 											)}
 										</div>
@@ -168,7 +168,7 @@ const ProfilePage = () => {
 										onClick={(e) => {
 											e.preventDefault();
 
-											follow({ currentUserId: currentUser._id, userToModifyId: user._id });
+											follow({ currentUserId: currentUser?._id, userToModifyId: user?._id });
 										}}
 									>
 										{isPending && "Loading..."}
@@ -179,15 +179,17 @@ const ProfilePage = () => {
 									</button>
 								)}
 
-								{(coverImg.showCoverImg || profileImg.showProfileImg) && (
+								{(coverImg?.showCoverImg || profileImg?.showProfileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
 										onClick={async () => {
-											await updateProfile({ userId: user._id, coverImg: coverImg.upCoverImg, profileImg: profileImg.upProfileImg, formData: null });
+											await updateProfile({ userId: user?._id, coverImg: coverImg?.upCoverImg, profileImg: profileImg?.upProfileImg, formData: null });
+											
 											setProfileImg({
 												showProfileImg: null,
 												updateProfileImg: null
 											});
+
 											setCoverImg({
 												showCoverImg: null,
 												upCoverImg: null
@@ -214,12 +216,11 @@ const ProfilePage = () => {
 											<>
 												<FaLink className='w-3 h-3 text-slate-500' />
 												<a
-													// href='https://youtube.com/@asaprogrammer_'
+													href={user?.link}
 													target='_blank'
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													{/* Updated this after recording the video. I forgot to update this while recording, sorry, thx. */}
 													{user?.link}
 												</a>
 											</>
@@ -235,15 +236,17 @@ const ProfilePage = () => {
 
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followingList.length}</span>
+										<span className='font-bold text-xs'>{user?.followingList?.length}</span>
 
 										<span className='text-slate-500 text-xs'>Following</span>
 									</div>
 
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followerList.length}</span>
+										<span className='font-bold text-xs'>{user?.followerList?.length}</span>
 
-										<span className='text-slate-500 text-xs'>Followers</span>
+										<span className='text-slate-500 text-xs'>
+											{user?.followerList?.length > 1 ? "Followers" : "Follower"}
+										</span>
 									</div>
 								</div>
 							</div>

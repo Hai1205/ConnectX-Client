@@ -52,7 +52,7 @@ const Post = ({ post }) => {
 	const { mutate: LikePost, isPending: isLiking } = useMutation({
 		mutationFn: async () => {
 			try {
-				const res = await likePost(userId, post._id);
+				const res = await likePost(post._id, userId);
 				const data = await res.data;
 
 				if (res.status !== 200) {
@@ -65,21 +65,18 @@ const Post = ({ post }) => {
 			}
 		},
 		onSuccess: (updatedLikes) => {
-			// this is not the best UX, bc it will refetch all posts
-			// queryClient.invalidateQueries({ queryKey: ["posts"] });
-
-			// instead, update the cache directly for that post
-			queryClient.setQueryData(["posts"], (oldData) => {
-				return oldData.map((p) => {
-					if (p._id === post._id) {
-						return { ...p, likes: updatedLikes };
-					}
-					return p;
-				});
-			});
+			// queryClient.setQueryData(["posts"], (oldData) => {
+			// 	return oldData.map((p) => {
+			// 		if (p._id === post._id) {
+			// 			return { ...p, likes: updatedLikes };
+			// 		}
+			// 		return p;
+			// 	});
+			// });
 		},
 		onError: (error) => {
 			toast.error(error.message);
+			console.error(error);
 		},
 	});
 

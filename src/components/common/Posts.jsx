@@ -111,7 +111,7 @@ const Posts = ({ feedType, userId }) => {
 			)}
 
 			{!isLoading && !isRefetching && posts?.length === 0 && (
-				<p className='text-center my-4'>No posts in this tab. Switch 👻</p>
+				<p className='text-center my-4'>No posts in this tab</p>
 			)}
 
 			{!isLoading && !isRefetching && posts && (
