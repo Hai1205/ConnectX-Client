@@ -1,7 +1,11 @@
-import axios from "axios";
+import axios from "../service/axiosCustomize";
 
-export const deleteNotification = async (notificationId) => {
-  return axios.delete(`/notifications/delete${notificationId}`);
+export const deleteNotificationById = async (notificationId) => {
+  return axios.delete(`/notifications/delete-by-id/${notificationId}`);
+};
+
+export const deleteNotificationByUserId = async (userId) => {
+  return axios.delete(`/notifications/delete-by-userid/${userId}`);
 };
 
 export const getUserNotification = async (userId) => {

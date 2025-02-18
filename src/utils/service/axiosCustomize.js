@@ -22,13 +22,19 @@ const instance = axios.create({
   },
 });
 
+// Hàm lấy JWT từ cookies, localStorage hoặc sessionStorage
+const getToken = (item) => {
+  return getCookie(item) || 
+         localStorage.getItem(item) || 
+         sessionStorage.getItem(item);
+};
+
 // Thêm request interceptor
 instance.interceptors.request.use(
   function (config) {
     NProgress.start();
 
-    // Lấy token từ cookies
-    const token = getCookie("JWT_TOKEN");
+    const token = getToken("JWT_TOKEN");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,6 +50,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   function (response) {
     NProgress.done();
+    
     return response;
   },
   function (error) {

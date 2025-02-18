@@ -1,28 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
-import Posts from "../../components/common/Posts";
-import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
-import EditProfileModal from "./EditProfileModal";
-
-// import { POSTS } from "../../utils/db/dummy";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
+
+import Posts from "../../components/common/Posts";
+import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
+
+import EditProfileModal from "./EditProfileModal";
+
 import { formatMemberSinceDate } from "../../utils/date";
+import { profileUser } from "../../utils/api/usersApi";
 
 import useFollow from "../../hooks/useFollow";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
-import { useSelector } from "react-redux";
-import { profileUser } from "../../utils/api/usersApi";
 
 const ProfilePage = () => {
+	const [feedType, setFeedType] = useState("userPosts")
 	const currentUser = useSelector((state) => state.user.currentUser);
-
 	const { username } = useParams();
+
+	const { isUpdatingProfile, updateProfile } = useUpdateUserProfile();
+	const { follow, isPending } = useFollow();
 
 	const [coverImg, setCoverImg] = useState({
 		showCoverImg: null,
@@ -32,13 +34,9 @@ const ProfilePage = () => {
 		showProfileImg: null,
 		upProfileImg: null
 	});
-	
-	const [feedType, setFeedType] = useState("posts");
 
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
-
-	const { follow, isPending } = useFollow();
 
 	const getProfile = async () => {
 		try {
@@ -63,12 +61,9 @@ const ProfilePage = () => {
 		queryKey: ["userProfile"],
 		queryFn: getProfile,
 	});
-
-	const { isUpdatingProfile, updateProfile } = useUpdateUserProfile();
-
-	const isMyProfile = currentUser._id === user?._id;
-	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
-	const amIFollowing = currentUser?.followingList.includes(user?._id);
+	useEffect(() => {
+		refetch();
+	}, [username, refetch]);
 
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
@@ -86,11 +81,10 @@ const ProfilePage = () => {
 			console.log(file);
 		}
 	};
-	console.log(coverImg.upCoverImg)
-
-	useEffect(() => {
-		refetch();
-	}, [username, refetch]);
+	
+	const isMyProfile = currentUser._id === user?._id;
+	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
+	const amIFollowing = currentUser?.followingList.includes(user?._id);
 	return (
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
@@ -151,8 +145,7 @@ const ProfilePage = () => {
 								{/* USER AVATAR */}
 								<div className='avatar absolute -bottom-16 left-4'>
 									<div className='w-32 rounded-full relative group/avatar'>
-										{/* <img src={"https://connect-x-server.s3.amazonaws.com/17e24ab4-e721-4883-ae17-697ebfdf3a6c-logo.png"} /> */}
-										<img src={profileImg.showProfileImg || user?.profileImg} />
+										<img src={profileImg?.showProfileImg || user?.profileImg || "/public/avatar-placeholder.png"} />
 
 										<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
 											{isMyProfile && (
@@ -242,13 +235,13 @@ const ProfilePage = () => {
 
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followerList.length}</span>
+										<span className='font-bold text-xs'>{user?.followingList.length}</span>
 
 										<span className='text-slate-500 text-xs'>Following</span>
 									</div>
 
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followingList.length}</span>
+										<span className='font-bold text-xs'>{user?.followerList.length}</span>
 
 										<span className='text-slate-500 text-xs'>Followers</span>
 									</div>
@@ -258,7 +251,7 @@ const ProfilePage = () => {
 							<div className='flex w-full border-b border-gray-700 mt-4'>
 								<div
 									className='flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer'
-									onClick={() => setFeedType("posts")}
+									onClick={() => setFeedType("userPosts")}
 								>
 									Posts
 									{feedType === "posts" && (
@@ -268,7 +261,7 @@ const ProfilePage = () => {
 
 								<div
 									className='flex justify-center flex-1 p-3 text-slate-500 hover:bg-secondary transition duration-300 relative cursor-pointer'
-									onClick={() => setFeedType("likes")}
+									onClick={() => setFeedType("likedPost")}
 								>
 									Likes
 									{feedType === "likes" && (
@@ -279,7 +272,7 @@ const ProfilePage = () => {
 						</>
 					)}
 
-					<Posts feedType={feedType} username={currentUser.username} userId={user?._id} />
+					<Posts feedType={feedType} userId={user?._id} />
 				</div>
 			</div>
 		</>

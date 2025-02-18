@@ -1,9 +1,19 @@
-import axios from "axios";
+import axios from "../service/axiosCustomize.js";
 
-export const createComemnt = async (img, formData) => {
+export const createComemnt = async (postId, userID, text, img) => {
+  const formData = new FormData();
+
+  if (img) {
+    formData.append("img", img);
+  }
+
+  if (text) {
+    formData.append("text", text);
+  }
+
   return axios.post(
-    "/comments/create-comments",
-    { img, formData },
+    `/comments/create-comment/${postId}/${userID}`,
+    formData,
     {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -24,10 +34,20 @@ export const deletePostComment = async (postId) => {
   return axios.delete(`/comments/delete-post-comments/${postId}`);
 };
 
-export const updateComment = async (commentId, formData, img) => {
+export const updateComment = async (postId, commentId, text, img) => {
+  const formData = new FormData();
+
+  if (img) {
+    formData.append("img", img);
+  }
+
+  if (text) {
+    formData.append("text", text);
+  }
+
   return axios.put(
-    `/comments/update-comment/${commentId}`,
-    { formData, img },
+    `/comments/update-comment/${postId}/${commentId}`,
+    formData,
     {
       headers: {
         "Content-Type": "multipart/form-data",

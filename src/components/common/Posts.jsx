@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import { getAllPosts, getFollowingPosts, getLikedPosts, getUserPosts } from "../../utils/api/postsApi";
 import { useSelector } from "react-redux";
 
-const Posts = ({ feedType }) => {
+const Posts = ({ feedType, userId }) => {
 	const currentUser = useSelector((state) => state.user.currentUser);
-	const userId = currentUser._id;
+	if(!userId) userId = currentUser._id;
 
 	const getAllPost = async () => {
 		try {
@@ -73,11 +73,11 @@ const Posts = ({ feedType }) => {
 		switch (feedType) {
 			case "forYou":
 				return getAllPost();
-			case "following":
+			case "followingPosts":
 				return getFollowingPost();
-			case "posts":
+			case "userPosts":
 				return getUserPost();
-			case "likes":
+			case "likedPost":
 				return getLikedPost();
 			default:
 				return getAllPosts();
@@ -90,10 +90,10 @@ const Posts = ({ feedType }) => {
 		refetch,
 		isRefetching,
 	} = useQuery({
-		queryKey: ["posts"],
-		queryFn: getResponse(),
+		queryKey: ["posts", feedType, userId],
+		queryFn: () => getResponse(),
 	});
-
+	
 	useEffect(() => {
 		refetch();
 	}, [feedType, refetch, userId]);

@@ -4,12 +4,8 @@ export const deletePost = async (postId) => {
   return await axios.delete(`/posts/${postId}`);
 };
 
-export const likePost = async (postId) => {
-  return await axios.post(`/posts/like/${postId}`);
-};
-
-export const commentPost = async (postId) => {
-  return await axios.post(`/posts/comment/${postId}`);
+export const likePost = async (userId, postId) => {
+  return await axios.post(`/posts/like/${userId}/${postId}`);
 };
 
 export const createPost = async (userId, photos, text) => {

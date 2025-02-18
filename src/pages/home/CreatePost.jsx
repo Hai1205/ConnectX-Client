@@ -75,7 +75,7 @@ const CreatePost = () => {
 		<div className='flex p-4 items-start gap-4 border-b border-gray-700'>
 			<div className='avatar'>
 				<div className='w-8 rounded-full'>
-					<img src={currentUser.profileImg} />
+					<img src={currentUser?.profileImg || "/public/avatar-placeholder.png"} />
 				</div>
 			</div>
 

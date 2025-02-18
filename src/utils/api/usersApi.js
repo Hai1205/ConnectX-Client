@@ -1,9 +1,7 @@
 import axios from "../service/axiosCustomize";
 
 export const followUser = async (currentUserId, userToModifyId) => {
-  return await axios.post(`/users/follow/${currentUserId}`, null, {
-    params: { userToModifyId },
-  });
+  return await axios.post(`/users/follow/${currentUserId}/${userToModifyId}`);
 };
 
 export const updateUser = async (userId, coverImg, profileImg, formData) => {
