@@ -14,7 +14,7 @@ const getCookie = (name) => {
 };
 
 // Tạo instance Axios
-const instance = axios.create({
+const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,
   withCredentials: true,
   headers: {
@@ -30,7 +30,7 @@ const getToken = (item) => {
 };
 
 // Thêm request interceptor
-instance.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   function (config) {
     NProgress.start();
 
@@ -47,7 +47,7 @@ instance.interceptors.request.use(
 );
 
 // Thêm response interceptor
-instance.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   function (response) {
     NProgress.done();
     
@@ -61,4 +61,4 @@ instance.interceptors.response.use(
   }
 );
 
-export default instance;
+export default axiosInstance;

@@ -1,18 +1,13 @@
-import axios from "../service/axiosCustomize.js";
+import axiosInstance from "../service/axiosInstance.js";
 
 export const registerUser = async (formData) => {
-  console.log(formData);
-  return await axios.post("/auth/register", formData);
+  return await axiosInstance.post("/api/auth/register", formData);
 };
 
 export const loginUser = async (formData) => {
-  return await axios.post("/auth/login", formData);
+  return await axiosInstance.post("/api/auth/login", formData);
 };
 
 export const logoutUser = async () => {
-  return await axios.post("/auth/logout");
-};
-
-export const me = async () => {
-  return await axios.get("/auth/me");
+  return await axiosInstance.post("/api/auth/logout");
 };

@@ -17,15 +17,16 @@ const RightPanel = () => {
 			if (!currentUser?._id) {
 				throw new Error("User ID is undefined");
 			}
-	
 			const res = await suggestedUser(currentUser._id);
+			const data = res.data.userList;
+			
 			if (res.status !== 200) {
 				console.log(res);
 
 				return [];
 			}
 	
-			return res.data.userList;
+			return data;
 		} catch (error) {
 			console.error("Error fetching suggested users:", error);
 			throw error;

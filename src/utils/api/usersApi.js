@@ -1,7 +1,7 @@
-import axios from "../service/axiosCustomize";
+import axiosInstance from "../service/axiosInstance";
 
 export const followUser = async (currentUserId, userToModifyId) => {
-  return await axios.post(`/users/follow/${currentUserId}/${userToModifyId}`);
+  return await axiosInstance.post(`/api/users/follow/${currentUserId}/${userToModifyId}`);
 };
 
 export const updateUser = async (userId, coverImg, profileImg, formData) => {
@@ -12,7 +12,7 @@ export const updateUser = async (userId, coverImg, profileImg, formData) => {
   }
 
   if (profileImg) {
-    console.log(profileImg)
+    console.log(profileImg);
     data.append("profileImg", profileImg);
   }
 
@@ -20,7 +20,7 @@ export const updateUser = async (userId, coverImg, profileImg, formData) => {
     data.append("formData", JSON.stringify(formData)); // Chuyển formData thành chuỗi JSON
   }
 
-  return await axios.put(`/users/update/${userId}`, data, {
+  return await axiosInstance.put(`/api/users/update/${userId}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -28,9 +28,9 @@ export const updateUser = async (userId, coverImg, profileImg, formData) => {
 };
 
 export const suggestedUser = async (userId) => {
-  return await axios.get(`/users/suggested/${userId}`);
+  return await axiosInstance.get(`/api/users/get-user-suggested/${userId}`);
 };
 
 export const profileUser = async (userId) => {
-  return await axios.get(`/users/profile/${userId}`);
+  return await axiosInstance.get(`/api/users/get-profile/${userId}`);
 };

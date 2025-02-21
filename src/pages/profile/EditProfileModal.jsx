@@ -21,17 +21,16 @@ const EditProfileModal = ({ currentUser }) => {
 	useEffect(() => {
 		if (currentUser) {
 			setFormData({
-				fullName: currentUser.fullName,
-				username: currentUser.username,
-				email: currentUser.email,
-				bio: currentUser.bio,
-				link: currentUser.link,
+				fullName: currentUser.fullName ?? "",
+				username: currentUser.username ?? "",
+				email: currentUser.email ?? "",
+				bio: currentUser.bio ?? "",
+				link: currentUser.link ?? "",
 				newPassword: "",
 				currentPassword: "",
 			});
 		}
 	}, [currentUser]);
-
 	return (
 		<>
 			<button
@@ -47,7 +46,7 @@ const EditProfileModal = ({ currentUser }) => {
 						className='flex flex-col gap-4'
 						onSubmit={(e) => {
 							e.preventDefault();
-							
+
 							updateProfile({ userId: currentUser?._id, coverImg: null, profileImg: null, formData: formData });
 						}}
 					>

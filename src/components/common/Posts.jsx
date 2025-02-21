@@ -2,12 +2,12 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { getAllPosts, getFollowingPosts, getLikedPosts, getUserPosts } from "../../utils/api/postsApi";
+import { getAllPosts, getBookmarkedPosts, getFollowingPosts, getLikedPosts, getUserPosts } from "../../utils/api/postsApi";
 import { useSelector } from "react-redux";
 
 const Posts = ({ feedType, userId }) => {
 	const currentUser = useSelector((state) => state.user.currentUser);
-	if(!userId) userId = currentUser._id;
+	if (!userId) userId = currentUser._id;
 
 	const getAllPost = async () => {
 		try {
@@ -69,6 +69,21 @@ const Posts = ({ feedType, userId }) => {
 		}
 	}
 
+	const getBookmarkedPost = async () => {
+		try {
+			const res = await getBookmarkedPosts(userId);
+			const data = res.data.postDTOList;
+
+			if (res.status !== 200) {
+				console.error(res);
+			}
+
+			return data;
+		} catch (error) {
+			console.error(res);
+		}
+	}
+
 	const getResponse = async () => {
 		switch (feedType) {
 			case "forYou":
@@ -79,6 +94,8 @@ const Posts = ({ feedType, userId }) => {
 				return getUserPost();
 			case "likedPost":
 				return getLikedPost();
+			case "bookmarkedPost":
+				return getBookmarkedPost();
 			default:
 				return getAllPosts();
 		}
@@ -93,7 +110,7 @@ const Posts = ({ feedType, userId }) => {
 		queryKey: ["posts", feedType, userId],
 		queryFn: () => getResponse(),
 	});
-	
+
 	useEffect(() => {
 		refetch();
 	}, [feedType, refetch, userId]);

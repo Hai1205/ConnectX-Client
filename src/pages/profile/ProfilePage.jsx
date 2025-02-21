@@ -17,8 +17,10 @@ import { profileUser } from "../../utils/api/usersApi";
 
 import useFollow from "../../hooks/useFollow";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+import CreatePost from "../home/CreatePost";
 
 const ProfilePage = () => {
+
 	const [feedType, setFeedType] = useState("userPosts")
 	const currentUser = useSelector((state) => state.user.currentUser);
 	const { username } = useParams();
@@ -112,7 +114,7 @@ const ProfilePage = () => {
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
 								<img
-									src={coverImg?.showCoverImg || user?.coverImg}
+									src={coverImg?.showCoverImg || user?.coverImgUrl || "/public/cover.png"}
 									className='h-52 w-full object-cover'
 									alt='cover image'
 								/>
@@ -145,7 +147,7 @@ const ProfilePage = () => {
 								{/* USER AVATAR */}
 								<div className='avatar absolute -bottom-16 left-4'>
 									<div className='w-32 rounded-full relative group/avatar'>
-										<img src={profileImg?.showProfileImg || user?.profileImg || "/public/avatar-placeholder.png"} />
+										<img src={profileImg?.showProfileImg || user?.profileImgUrl || "/public/avatar-placeholder.png"} />
 
 										<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
 											{isMyProfile && (
@@ -184,7 +186,7 @@ const ProfilePage = () => {
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
 										onClick={async () => {
 											await updateProfile({ userId: user?._id, coverImg: coverImg?.upCoverImg, profileImg: profileImg?.upProfileImg, formData: null });
-											
+
 											setProfileImg({
 												showProfileImg: null,
 												updateProfileImg: null
@@ -274,6 +276,8 @@ const ProfilePage = () => {
 							</div>
 						</>
 					)}
+
+					<CreatePost />
 
 					<Posts feedType={feedType} userId={user?._id} />
 				</div>

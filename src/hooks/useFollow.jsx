@@ -8,7 +8,7 @@ const useFollow = () => {
 		mutationFn: async ({currentUserId, userToModifyId}) => {
 			try {
 				const res = await followUser(currentUserId, userToModifyId);
-
+console.log(res);
 				if (res.status !== 200) {
 					console.error(res)
 				}

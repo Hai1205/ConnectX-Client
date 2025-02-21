@@ -1,17 +1,17 @@
-import axios from "../service/axiosCustomize";
+import axiosInstance from "../service/axiosInstance";
 
 export const deleteNotificationById = async (notificationId) => {
-  return axios.delete(`/notifications/delete-by-id/${notificationId}`);
+  return axiosInstance.delete(`/api/notifications/delete-by-id/${notificationId}`);
 };
 
 export const deleteNotificationByUserId = async (userId) => {
-  return axios.delete(`/notifications/delete-by-userid/${userId}`);
+  return axiosInstance.delete(`/api/notifications/delete-by-userid/${userId}`);
 };
 
 export const getUserNotification = async (userId) => {
-  return axios.get(`/notifications/user-notifications/${userId}`);
+  return axiosInstance.get(`/api/notifications/get-user-notifications/${userId}`);
 };
 
 export const notification = async () => {
-  return axios.get("notifications/all-notifications");
+  return axiosInstance.get("/api/notifications/get-all-notifications");
 };
